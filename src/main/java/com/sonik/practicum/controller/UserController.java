@@ -23,7 +23,7 @@ public class UserController {
         List<User> users = service.findAll();
         model.addAttribute("users", users);
 
-        return "users"; // Возвращаем название шаблона — users.html
+        return "user/users"; // Возвращаем название шаблона — users.html
     }
 
 

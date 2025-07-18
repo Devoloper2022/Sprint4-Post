@@ -1,4 +1,4 @@
-package com.sonik.practicum.repository;
+package com.sonik.practicum.repository.Interface;
 
 import com.sonik.practicum.models.User;
 

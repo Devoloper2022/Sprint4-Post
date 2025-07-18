@@ -3,7 +3,6 @@
 
 <head>
     <title>Витрина товаров</title>
-    <!-- Немного Java-скрипта для добавления и редактирования комментариев, чтобы не было релоада всей страницы -->
     <script>
         function editComment(id) {
             var comment = document.getElementById("comment" + id);
@@ -44,96 +43,69 @@
 </head>
 
 <body>
-    <!-- Вместо href ссылка на ленту постов -->
-    <a href="..." style="float:right;">
-        <b>НА ГЛАВНУЮ &cudarrr;</b>
-    </a>
-    <table style="width:50%;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td>
-                <!-- Вместо action ссылка на страницу редактирования поста -->
-                <form method="GET" th:action="...">
-                    <button style="float:right;">РЕДАКТИРОВАТЬ ПОСТ</button>
-                </form>
-            </td>
-            <td>
-                <!-- Вместо action ссылка на эндпоинт удаления поста -->
-                <form method="POST" th:action="...">
-                    <button style="float:right;">УДАЛИТЬ ПОСТ</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td>
-            	<!-- Вместо text название поста -->
-                <h2 th:text="..."></h2>
-                <p>
-                    <!-- Вместо src ссылка на картинку поста -->
-                    <img height="300" th:src="...">
-                </p>
-                <p>
-                    <!-- Вместо action ссылка на эндпоинт изменения числа лайков поста -->
-                    <form th:action="..." method="post">
-                    	<!-- Увеличение -->
-                        <button name="like" value="true">&#x1F44D;</button>
-                        <!-- Вместо text число лайков поста -->
-                        <span th:text="..."></span>
-                        <!-- Уменьшение -->
-                        <button name="like" value="false">&#128078;</button>
-                        <!-- Вместо text число комментариев поста -->
-                        <span th:text="..." style="float:right;"></span>
-                    </form>
-                </p>
-                <p>
-                    <!-- 
-            		В each итерируемся по тегам поста
-            		В text выводим название тега поста
-            	    -->
-                    <span th:each="..." th:text="..."></span>
-                </p>
-            </td>
-        </tr>
-        <!-- 
-	    В each итерируемся по абзацам текста поста
-	    В text выводим абзац текста поста
-	-->
-        <tr th:each="...">
-            <td th:text="..."></td>
-        </tr>
-        <tr>
-            <td>
-                <hr>
-                <h2>Комментарии</h2>
-            </td>
-        </tr>
-        <!-- В each итерируемся по комментариям поста -->
-        <tr th:each="...">
-            <td style="border-left:thin solid grey;">
-            	<!-- В action ссылка на эндпоинт редактирования комментария поста -->
-                <form method="POST" th:action="...">
-                    <!-- 
-                    	В id идентификатор поста с префиксом 'comment' (нужно для работы JavaScript-a из <head>)
-                    	В text текст комментария поста
-                    -->
-                    <span th:id="${'comment'+...}" th:text="..."></span>
-                    <!-- В id идентификатор поста -->
-                    <button th:id="..." onclick="editComment(this.id)" style="float:right;">&#9998;</button>
-                </form>
-            </td>
-            <td>
-            	<!-- В action ссылка на эндпоинт удаления комментария поста -->
-                <form method="POST" th:action="...">
-                    <button style="float:right;">&#10007;</button>
-                </form>
-            </td>
-        </tr>
-        <tr>
-            <td>
-            	<!-- В action ссылка на эндпоинт добавления комментария поста -->
-                <form id="addCommentForm" th:action="..." method="post">
-                    <button id="addCommentButton" style="float:right;" onclick="addComment()">Добавить комментарий</button>
-                </form>
-            </td>
-        </tr>
-    </table>
+<a href="/posts" style="float:right;">
+    <b>НА ГЛАВНУЮ &cudarrr;</b>
+</a>
+<table style="width:50%;margin-left:auto;margin-right:auto;">
+    <tr>
+        <td>
+            <form method="GET" th:action="${'/posts/'+post.getId()+'/edit'}">
+                <button style="float:right;">РЕДАКТИРОВАТЬ ПОСТ</button>
+            </form>
+        </td>
+        <td>
+            <form method="POST" th:action="${'/posts/'+post.getId()+'/delete'}">
+                <button style="float:right;">УДАЛИТЬ ПОСТ</button>
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h2 th:text="${post.getTitle()}"></h2>
+            <p>
+                <img height="300" th:src="${'http://localhost:8080/images/'+post.getId()}">
+            </p>
+            <p>
+            <form th:action="${'/posts/'+post.getId()+'/like'}" method="post">
+                <button name="like" value="true">&#x1F44D;</button>
+                <span th:text="${post.getLikesCount()}"></span>
+                <button name="like" value="false">&#128078;</button>
+                <span th:text="${'комментарии '+post.getComments().size()}" style="float:right;"></span>
+            </form>
+            </p>
+            <p>
+                <span th:each="tag : ${post.getTags()}" th:text="${'#'+tag+' '}"></span>
+            </p>
+        </td>
+    </tr>
+    <tr th:each="textPart : ${post.getTextParts()}">
+        <td th:text="${textPart}"></td>
+    </tr>
+    <tr>
+        <td>
+            <hr>
+            <h2>Комментарии</h2>
+        </td>
+    </tr>
+    <tr th:each="comment : ${post.getComments()}">
+        <td style="border-left:thin solid grey;">
+            <form method="POST" th:action="${'/posts/'+post.getId()+'/comments/'+comment.getId()}">
+                <span th:id="${'comment'+comment.getId()}" th:text="${comment.getText()}"></span>
+                <button th:id="${comment.getId()}" onclick="editComment(this.id)" style="float:right;">&#9998;</button>
+            </form>
+        </td>
+        <td>
+            <form method="POST" th:action="${'/posts/'+post.getId()+'/comments/'+comment.getId()+'/delete'}">
+                <button style="float:right;">&#10007;</button>
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <form id="addCommentForm" th:action="${'/posts/'+post.getId()+'/comments'}" method="post">
+                <button id="addCommentButton" style="float:right;" onclick="addComment()">Добавить комментарий</button>
+            </form>
+        </td>
+    </tr>
+</table>
 </body>

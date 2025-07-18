@@ -63,11 +63,19 @@
       <artifactId>spring-data-jdbc</artifactId>
       <version>3.4.1</version>
     </dependency>
-  </dependencies>
 
-  <build>
-    <finalName>post</finalName>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.30</version>
+    </dependency>
+
+</dependencies>
+
+<build>
+<finalName>post</finalName>
+<pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
