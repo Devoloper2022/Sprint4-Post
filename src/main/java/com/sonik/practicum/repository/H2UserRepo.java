@@ -1,6 +1,6 @@
 package com.sonik.practicum.repository;
 
-import com.sonik.practicum.models.User;
+import com.sonik.practicum.models.Entity.User;
 import com.sonik.practicum.repository.Interface.UserRepo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

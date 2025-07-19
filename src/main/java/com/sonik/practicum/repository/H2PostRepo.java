@@ -1,6 +1,6 @@
 package com.sonik.practicum.repository;
 
-import com.sonik.practicum.models.Post;
+import com.sonik.practicum.models.Entity.Post;
 
 import com.sonik.practicum.repository.Interface.PostRepo;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -54,6 +54,23 @@ public class H2PostRepo implements PostRepo {
         jdbcTemplate.update(
                 "UPDATE posts SET title = ?, content = ?, tags = ?,likes = ? WHERE id = ?",
                post.getTitle(), post.getContent(), post.getTags(),post.getLikes(), post.getId());
+    }
+
+    @Override
+    public Post findById(Long id) {
+        String sql = "SELECT id, title, content, tags, likes FROM posts WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(
+                sql,
+                new Long[]{id},
+                (rs, rowNum) -> new Post(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("tags"),
+                        rs.getInt("likes")
+                )
+        );
     }
 
 }

@@ -19,6 +19,13 @@ create table if not exists posts(
                                     likes integer
                                     );
 
+create table if not exists comments(
+                                    id bigserial PRIMARY KEY,
+                                    comment text not null,
+                                    postId bigserial
+
+);
+
 
 insert into posts(title,content, tags, likes) values ('Sonik', 'asdfasdfasdfasdfasdfasdf', '#os#java#spring#sonik', 30);
 insert into posts(title,content, tags, likes) values ('Java ','asdfasdfasdfasdfasdfasdf',  '#os#java#spring#sonik', 12);

@@ -1,12 +1,11 @@
 package com.sonik.practicum.controller;
 
-import com.sonik.practicum.models.User;
+import com.sonik.practicum.models.Entity.User;
 import com.sonik.practicum.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Controller

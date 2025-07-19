@@ -1,4 +1,4 @@
-package com.sonik.practicum.models;
+package com.sonik.practicum.models.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

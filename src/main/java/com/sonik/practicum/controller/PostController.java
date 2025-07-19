@@ -1,6 +1,9 @@
 package com.sonik.practicum.controller;
 
-import com.sonik.practicum.models.Post;
+import com.sonik.practicum.dto.LikeDto;
+import com.sonik.practicum.dto.PostDto;
+import com.sonik.practicum.models.Entity.Post;
+import com.sonik.practicum.service.CommentService;
 import com.sonik.practicum.service.PostService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +15,11 @@ import java.util.List;
 @RequestMapping("/blog")
 public class PostController {
     private final PostService service;
+    private final CommentService commentService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, CommentService commentService) {
         this.service = postService;
+        this.commentService = commentService;
     }
 
 
@@ -25,7 +30,7 @@ public class PostController {
 //            @RequestParam(defaultValue = "10") int pageSize,
             Model model
     ) {
-        List<Post> posts = service.findAll();
+        List<PostDto> posts = service.findAll();
 
         model.addAttribute("posts", posts);
 //        model.addAttribute("searchQuery", search);
@@ -50,12 +55,11 @@ public class PostController {
     }
 
 
-
     @GetMapping(value = "/{id}")
-    public String get(@PathVariable(name = "id") Long id) {
-        service.(id);
-
-        return "redirect:/post/blog";
+    public String getPostPage(@PathVariable(name = "id") Long id,Model model) {
+        PostDto post= service.findById(id);
+        model.addAttribute("post", post);
+        return "post/post";
     }
 
     @PostMapping(value = "/{id}")
@@ -64,17 +68,57 @@ public class PostController {
 
         return "redirect:/post/blog/" + post.getId();
     }
-//
+
+    @GetMapping(value = "/{id}/edit")
+    public String getEditPage(@PathVariable(name = "id") Long id) {
+        return "post/add-post";
+    }
 
 
-
-
-    @PostMapping(value = "/{id}", params = "_method=delete")
+    @PostMapping(value = "/{id}/delete")
     public String delete(@PathVariable(name = "id") Long id) {
         service.deleteById(id);
 
-        return "redirect:/posts";
+        return "redirect:/blog";
     }
+
+
+
+
+
+    @GetMapping(value = "/{id}/like")
+    public String likePost(
+            @PathVariable(name = "id") Long id,
+            @ModelAttribute LikeDto like) {
+
+        return "post/add-post";
+    }
+
+    @PostMapping(value = "/{id}/comments/")
+    public String comment(
+            @PathVariable(name = "id") Long id) {
+        return "post/add-post";
+    }
+
+    @PostMapping(value = "/{id}/comments/{commentsId}")
+    public String commentEdit(
+            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "commentsId") Long commentsId
+    ) {
+
+        return "post/add-post";
+    }
+
+    @PostMapping(value = "/{id}/comments/{commentsId}/delete")
+    public String commentsDelete(
+            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "commentsId") Long commentsId
+    ) {
+        return "post/add-post";
+    }
+
+
+
 
 
 

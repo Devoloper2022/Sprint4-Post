@@ -1,6 +1,6 @@
 package com.sonik.practicum.repository.Interface;
 
-import com.sonik.practicum.models.User;
+import com.sonik.practicum.models.Entity.User;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.sonik.practicum.models;
+package com.sonik.practicum.models.Entity;
 
 public class User {
     private Long id;
