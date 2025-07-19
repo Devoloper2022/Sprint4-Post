@@ -1,8 +1,6 @@
 package com.sonik.practicum.controller;
 
 import com.sonik.practicum.models.Post;
-import com.sonik.practicum.models.User;
-import com.sonik.practicum.repository.Interface.PostRepo;
 import com.sonik.practicum.service.PostService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,22 +36,37 @@ public class PostController {
     }
 
 
+    @PostMapping
+    public String save(@ModelAttribute Post post) {
+        service.save(post);
+        return "redirect:/post/blog";
+    }
 
-//    @PostMapping
-//    public String save(@ModelAttribute Post post) {
-//        service.save(post);
+
+
+    @GetMapping("/add")
+    public String getAddPage() {
+        return "post/add-post";
+    }
+
+
+
+    @GetMapping(value = "/{id}")
+    public String get(@PathVariable(name = "id") Long id) {
+        service.(id);
+
+        return "redirect:/post/blog";
+    }
+
+    @PostMapping(value = "/{id}")
+    public String edit(@ModelAttribute Post post) {
+        service.update(post);
+
+        return "redirect:/post/blog/" + post.getId();
+    }
 //
-//        return "redirect:/posts";
-//    }
-//
-//
-//
-//    @PostMapping
-//    public String edit(@ModelAttribute Post post) {
-//        service.update(post);
-//
-//        return "redirect:/posts";
-//    }
+
+
 
 
     @PostMapping(value = "/{id}", params = "_method=delete")
@@ -64,12 +77,6 @@ public class PostController {
     }
 
 
-    @GetMapping(value = "/{id}")
-    public String get(@PathVariable(name = "id") Long id) {
-        service.deleteById(id);
-
-        return "redirect:/posts";
-    }
 
 
 
