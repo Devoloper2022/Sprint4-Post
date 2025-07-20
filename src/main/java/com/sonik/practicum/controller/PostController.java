@@ -1,13 +1,16 @@
 package com.sonik.practicum.controller;
 
+import com.sonik.practicum.dto.CommentDto;
 import com.sonik.practicum.dto.LikeDto;
 import com.sonik.practicum.dto.PostDto;
+import com.sonik.practicum.dto.PostsDto;
 import com.sonik.practicum.models.Entity.Post;
 import com.sonik.practicum.service.CommentService;
 import com.sonik.practicum.service.PostService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,7 +33,7 @@ public class PostController {
 //            @RequestParam(defaultValue = "10") int pageSize,
             Model model
     ) {
-        List<PostDto> posts = service.findAll();
+        List<PostsDto> posts = service.findAll();
 
         model.addAttribute("posts", posts);
 //        model.addAttribute("searchQuery", search);
@@ -42,11 +45,12 @@ public class PostController {
 
 
     @PostMapping
-    public String save(@ModelAttribute Post post) {
-        service.save(post);
+    public String save(
+            @ModelAttribute Post post,
+            @RequestParam(name = "image") MultipartFile image) {
+        service.save(post,image);
         return "redirect:/post/blog";
     }
-
 
 
     @GetMapping("/add")
@@ -56,21 +60,27 @@ public class PostController {
 
 
     @GetMapping(value = "/{id}")
-    public String getPostPage(@PathVariable(name = "id") Long id,Model model) {
-        PostDto post= service.findById(id);
+    public String getPostPage(@PathVariable(name = "id") Long id, Model model) {
+        PostsDto post = service.findById(id);
         model.addAttribute("post", post);
         return "post/post";
     }
 
     @PostMapping(value = "/{id}")
-    public String edit(@ModelAttribute Post post) {
-        service.update(post);
+    public String edit(
+            @PathVariable(name = "id") Long id,
+            @ModelAttribute PostDto post
+    ) {
+        service.update(post, id);
 
-        return "redirect:/post/blog/" + post.getId();
+        return "redirect:/post/blog/" + id;
     }
 
     @GetMapping(value = "/{id}/edit")
-    public String getEditPage(@PathVariable(name = "id") Long id) {
+    public String getEditPage(@PathVariable(name = "id") Long id,
+                              Model model) {
+        PostsDto dto = service.findById(id);
+        model.addAttribute("post", dto);
         return "post/add-post";
     }
 
@@ -83,30 +93,32 @@ public class PostController {
     }
 
 
-
-
-
-    @GetMapping(value = "/{id}/like")
+    @PostMapping(value = "/{id}/like")
     public String likePost(
             @PathVariable(name = "id") Long id,
             @ModelAttribute LikeDto like) {
+        service.like(like, id);
 
-        return "post/add-post";
+        return "redirect:/blog/" + id;
     }
 
-    @PostMapping(value = "/{id}/comments/")
-    public String comment(
+    @PostMapping(value = "/{id}/comments")
+    public String addComment(
+            @ModelAttribute CommentDto dto,
             @PathVariable(name = "id") Long id) {
-        return "post/add-post";
+        commentService.save(dto, id);
+        return "redirect:/blog/" + id;
     }
 
     @PostMapping(value = "/{id}/comments/{commentsId}")
     public String commentEdit(
+            @ModelAttribute CommentDto dto,
             @PathVariable(name = "id") Long id,
             @PathVariable(name = "commentsId") Long commentsId
     ) {
-
-        return "post/add-post";
+        dto.setId(commentsId);
+        commentService.update(dto);
+        return "redirect:/blog/" + id;
     }
 
     @PostMapping(value = "/{id}/comments/{commentsId}/delete")
@@ -114,14 +126,9 @@ public class PostController {
             @PathVariable(name = "id") Long id,
             @PathVariable(name = "commentsId") Long commentsId
     ) {
-        return "post/add-post";
+        commentService.deleteById(commentsId);
+        return "redirect:/blog/" + id;
     }
-
-
-
-
-
-
 
 
 }

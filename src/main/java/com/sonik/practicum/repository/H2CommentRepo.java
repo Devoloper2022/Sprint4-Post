@@ -33,8 +33,8 @@ public class H2CommentRepo implements CommentRepo {
 
     @Override
     public void save(Comment comments) {
-        jdbcTemplate.update("insert into comments(id, comment) values(? ,?, ?, ?, ?)",
-                comments.getId(),comments.getComment());
+        jdbcTemplate.update("insert into comments( comment,postId) values(? ,?)",
+                comments.getComment(),comments.getPostId());
     }
 
     @Override

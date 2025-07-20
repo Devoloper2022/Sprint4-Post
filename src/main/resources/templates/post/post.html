@@ -9,7 +9,7 @@
             var newComment = document.createElement("textarea");
             newComment.innerHTML = comment.innerHTML;
             newComment.rows = 3;
-            newComment.name = "text";
+            newComment.name = "comment";
             newComment.style = "width:100%;";
             comment.parentNode.replaceChild(newComment, comment);
 
@@ -30,7 +30,7 @@
 
             var newComment = document.createElement("textarea");
             newComment.rows = 3;
-            newComment.name = "text";
+            newComment.name = "comment";
             newComment.style = "width:100%;";
             form.appendChild(newComment);
 
@@ -63,14 +63,14 @@
         <td>
             <h2 th:text="${post.getTitle()}"></h2>
             <p>
-                <img height="300" th:src="${'http://localhost:8080/images/'+post.getId()}">
+                <img height="300" th:src="${'http://localhost:8080/post/images/'+post.getImage()}">
             </p>
             <p>
             <form th:action="${'/post/blog/'+post.getId()+'/like'}" method="post">
                 <button name="like" value="true">&#x1F44D;</button>
                 <span th:text="${post.getLikes()}"></span>
                 <button name="like" value="false">&#128078;</button>
-<!--                <span th:text="${'комментарии '+post.getComments().size()}" style="float:right;"></span>-->
+                <span th:text="${'комментарии '+post.getComments().size()}" style="float:right;"></span>
             </form>
             </p>
             <p>
@@ -78,7 +78,7 @@
             </p>
         </td>
     </tr>
-    <tr th:each="textPart : ${post.getTextParts()}">
+    <tr th:each="textPart : ${post.getParagraphs()}">
         <td th:text="${textPart}"></td>
     </tr>
     <tr>
@@ -87,25 +87,25 @@
             <h2>Комментарии</h2>
         </td>
     </tr>
-<!--    <tr th:each="comment : ${post.getComments()}">-->
-<!--        <td style="border-left:thin solid grey;">-->
-<!--            <form method="POST" th:action="${'/post/blog/'+post.getId()+'/comments/'+comment.getId()}">-->
-<!--                <span th:id="${'comment'+comment.getId()}" th:text="${comment.getText()}"></span>-->
-<!--                <button th:id="${comment.getId()}" onclick="editComment(this.id)" style="float:right;">&#9998;</button>-->
-<!--            </form>-->
-<!--        </td>-->
-<!--        <td>-->
-<!--            <form method="POST" th:action="${'/posts/'+post.getId()+'/comments/'+comment.getId()+'/delete'}">-->
-<!--                <button style="float:right;">&#10007;</button>-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </tr>-->
-<!--    <tr>-->
-<!--        <td>-->
-<!--            <form id="addCommentForm" th:action="${'/posts/'+post.getId()+'/comments'}" method="post">-->
-<!--                <button id="addCommentButton" style="float:right;" onclick="addComment()">Добавить комментарий</button>-->
-<!--            </form>-->
-<!--        </td>-->
-<!--    </tr>-->
+    <tr th:each="comment : ${post.getComments()}">
+        <td style="border-left:thin solid grey;">
+            <form method="POST" th:action="${'/post/blog/'+post.getId()+'/comments/'+comment.getId()}">
+                <span th:id="${'comment'+comment.getId()}" th:text="${comment.getComment()}"></span>
+                <button th:id="${comment.getId()}" onclick="editComment(this.id)" style="float:right;">&#9998;</button>
+            </form>
+        </td>
+        <td>
+            <form method="POST" th:action="${'/post/blog/'+post.getId()+'/comments/'+comment.getId()+'/delete'}">
+                <button style="float:right;">&#10007;</button>
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <form id="addCommentForm" th:action="${'/post/blog/'+post.getId()+'/comments'}" method="post">
+                <button id="addCommentButton" style="float:right;" name="comment" onclick="addComment()">Добавить комментарий</button>
+            </form>
+        </td>
+    </tr>
 </table>
 </body>

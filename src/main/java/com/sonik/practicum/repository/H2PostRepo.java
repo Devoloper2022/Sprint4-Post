@@ -1,5 +1,6 @@
 package com.sonik.practicum.repository;
 
+import com.sonik.practicum.dto.PostDto;
 import com.sonik.practicum.models.Entity.Post;
 
 import com.sonik.practicum.repository.Interface.PostRepo;
@@ -25,13 +26,14 @@ public class H2PostRepo implements PostRepo {
     @Override
     public List<Post> findAll() {
         return jdbcTemplate.query(
-                "select id, title ,content, tags,likes from posts",
+                "select id, title ,content, tags,likes,image from posts",
                 (rs, rowNum) -> new Post(
                         rs.getLong("id"),
                         rs.getString("title"),
                         rs.getString("content"),
                         rs.getString("tags"),
-                        rs.getInt("likes")
+                        rs.getInt("likes"),
+                        rs.getString("image")
                 ));
 
     }
@@ -39,8 +41,8 @@ public class H2PostRepo implements PostRepo {
 
     @Override
     public void save(Post post) {
-        jdbcTemplate.update("insert into posts(id,title, content, tags,likes) values(? ,?, ?, ?, ?)",
-                post.getId(),post.getTitle(), post.getContent(), post.getTags(),post.getLikes());
+        jdbcTemplate.update("insert into posts(title, content, tags,image,likes) values(?,?, ?, ?, ?)",
+                post.getTitle(), post.getContent(), post.getTags(),post.getImage(),post.getLikes());
     }
 
     @Override
@@ -52,13 +54,13 @@ public class H2PostRepo implements PostRepo {
     @Override
     public void update(Post post) {
         jdbcTemplate.update(
-                "UPDATE posts SET title = ?, content = ?, tags = ?,likes = ? WHERE id = ?",
-               post.getTitle(), post.getContent(), post.getTags(),post.getLikes(), post.getId());
+                "UPDATE posts SET title = ?, content = ?, tags = ?,likes = ?,images =?  WHERE id = ?",
+               post.getTitle(), post.getContent(), post.getTags(),post.getLikes(), post.getImage(),post.getId());
     }
 
     @Override
     public Post findById(Long id) {
-        String sql = "SELECT id, title, content, tags, likes FROM posts WHERE id = ?";
+        String sql = "SELECT id, title, content, tags, likes ,image FROM posts WHERE id = ?";
 
         return jdbcTemplate.queryForObject(
                 sql,
@@ -68,7 +70,8 @@ public class H2PostRepo implements PostRepo {
                         rs.getString("title"),
                         rs.getString("content"),
                         rs.getString("tags"),
-                        rs.getInt("likes")
+                        rs.getInt("likes"),
+                        rs.getString("image")
                 )
         );
     }

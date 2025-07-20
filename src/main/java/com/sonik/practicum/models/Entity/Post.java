@@ -13,4 +13,5 @@ public class Post {
     private String content;
     private String tags;
     private Integer likes;
+    private String image;
 }

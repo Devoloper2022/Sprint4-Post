@@ -27,14 +27,20 @@ public class CommentService {
         return CommentMapper.toDto(repo.findById(id));
     }
 
+    public Comment findEntity(Long id) {
+        return repo.findById(id);
+    }
+
+
 
     public void save(CommentDto dto, Long postId) {
         Comment comment = CommentMapper.toEntity(dto, postId);
         repo.save(comment);
     }
 
-    public void update(CommentDto dto, Long postId) {
-        Comment comment = CommentMapper.toEntity(dto, postId);
+    public void update(CommentDto dto) {
+        Comment comment = findEntity(dto.getId());
+        comment.setComment(dto.getComment());
         repo.update(comment);
     }
 

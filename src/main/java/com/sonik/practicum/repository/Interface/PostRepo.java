@@ -1,5 +1,6 @@
 package com.sonik.practicum.repository.Interface;
 
+import com.sonik.practicum.dto.PostDto;
 import com.sonik.practicum.models.Entity.Post;
 
 import java.util.List;
