@@ -28,28 +28,30 @@ public class PostController {
 
     @GetMapping
     public String posts(
-//            @RequestParam(defaultValue = "") String search,
-//            @RequestParam(defaultValue = "0") int pageNumber,
-//            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "tag", required = false) String tag,
             Model model
     ) {
         List<PostsDto> posts = service.findAll();
 
         model.addAttribute("posts", posts);
-//        model.addAttribute("searchQuery", search);
-//        model.addAttribute("currentPage", pageNumber);
-//        model.addAttribute("totalPages", 5);
-//        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("tag", tag);
         return "post/posts";
     }
 
 
     @PostMapping
     public String save(
-            @ModelAttribute Post post,
-            @RequestParam(name = "image") MultipartFile image) {
-        service.save(post,image);
-        return "redirect:/post/blog";
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "content", required = false) String content,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "image", required = false) MultipartFile image)
+    {
+        service.save(title,content,tags,image);
+        return "redirect:/blog";
     }
 
 
@@ -69,9 +71,12 @@ public class PostController {
     @PostMapping(value = "/{id}")
     public String edit(
             @PathVariable(name = "id") Long id,
-            @ModelAttribute PostDto post
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "content", required = false) String content,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "image", required = false) MultipartFile image
     ) {
-        service.update(post, id);
+        service.update(title ,content,tags,image, id);
 
         return "redirect:/post/blog/" + id;
     }

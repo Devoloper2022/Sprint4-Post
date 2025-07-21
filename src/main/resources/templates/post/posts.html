@@ -12,26 +12,26 @@
 <table style="width:50%;margin-left:auto;margin-right:auto;">
 <!--    <tr>-->
 <!--        <td>-->
-<!--            <form>-->
+<!--            <form method="GET" th:action="@{/posts}">-->
 <!--                <p>-->
 <!--                    <label for="search">Найти по тегу: </label>-->
-<!--                    <input id="search" style="width:300px;" name="search" th:value="${search}">-->
-<!--                    <button name="action">&#128269;</button>-->
+<!--                    <input id="search" style="width:300px;" name="tag" th:value="${tag} ?: ''">-->
+<!--                    <button name="action">🔍</button>-->
 <!--                </p>-->
 <!--                <p>-->
 <!--                    <label for="pageSize">Число постов: </label>-->
-<!--                    <select id="pageSize" name="pageSize" onchange="this.form.submit()">-->
-<!--                        <option value="5" th:selected="${paging.pageSize()==5}">5</option>-->
-<!--                        <option value="10" th:selected="${paging.pageSize()==10}">10</option>-->
-<!--                        <option value="20" th:selected="${paging.pageSize()==20}">20</option>-->
-<!--                        <option value="50" th:selected="${paging.pageSize()==50}">50</option>-->
-<!--                        <option value="100" th:selected="${paging.pageSize()==100}">100</option>-->
+<!--                    <select id="pageSize" name="size" onchange="this.form.submit()">-->
+<!--                        <option value="5" th:selected="${pageSize == 5}">5</option>-->
+<!--                        <option value="10" th:selected="${pageSize == 10}">10</option>-->
+<!--                        <option value="20" th:selected="${pageSize == 20}">20</option>-->
+<!--                        <option value="50" th:selected="${pageSize == 50}">50</option>-->
+<!--                        <option value="100" th:selected="${pageSize == 100}">100</option>-->
 <!--                    </select>-->
 <!--                </p>-->
 <!--                <p>-->
-<!--                    <button th:if="${paging.hasPrevious()}" name="pageNumber" th:value="${paging.pageNumber()-1}">&lt;</button>-->
-<!--                    <span th:text="${'Страница: '+paging.pageNumber()}"></span>-->
-<!--                    <button th:if="${paging.hasNext()}" name="pageNumber" th:value="${paging.pageNumber()+1}">&gt;</button>-->
+<!--                    <button th:if="${currentPage > 1}" name="page" th:value="${currentPage - 1}"><</button>-->
+<!--                    <span th:text="${currentPage}"></span>-->
+<!--                    <button th:if="${posts.size() == pageSize}" name="page" th:value="${currentPage + 1}">></button>-->
 <!--                </p>-->
 <!--            </form>-->
 <!--        </td>-->

@@ -59,37 +59,52 @@ public class PostService {
         postRepo.update(post);
     }
 
-    public void save(Post post, MultipartFile file) {
-        if (!file.isEmpty()) {
-            try {
-                String fileName = file.getOriginalFilename();
-                File destination = new File(storePath + fileName);
-                file.transferTo(destination); // save the file
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        post.setImage(file.getOriginalFilename());
+    public void save(String title, String text, String tags, MultipartFile image) {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(text);
+        post.setTags(tags);
+        post.setLikes(0);
+
+
+        String fileName = saveImage(image);
+        post.setImage(fileName);
         postRepo.save(post);
 
     }
 
-    public void update(PostDto dto,Long id) {
-        if (!dto.getImage().isEmpty()) {
-            try {
-                String fileName = dto.getImage().getOriginalFilename();
-                File destination = new File(storePath + fileName);
-                dto.getImage().transferTo(destination); // save the file
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        Post post = PostMapper.toEntity(dto);
+    public void update(String title, String text, String tags, MultipartFile image, Long id) {
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(text);
+        post.setTags(tags);
+        post.setLikes(0);
+
+
+        String fileName = saveImage(image);
+        post.setImage(fileName);
         post.setId(id);
         postRepo.update(post);
     }
 
     public void deleteById(Long id) {
         postRepo.deleteById(id);
+    }
+
+    private String saveImage(MultipartFile file) {
+
+        if (file == null || file.isEmpty()) {
+            return "";
+        }
+        try {
+            String fileName = file.getOriginalFilename();
+            File destination = new File(storePath + fileName);
+            file.transferTo(destination); // save the file
+        } catch (IOException e) {
+            throw new RuntimeException(" <UNK>");
+        }
+
+
+        return file.getOriginalFilename();
     }
 }
