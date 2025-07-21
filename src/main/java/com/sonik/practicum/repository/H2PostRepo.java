@@ -54,7 +54,7 @@ public class H2PostRepo implements PostRepo {
     @Override
     public void update(Post post) {
         jdbcTemplate.update(
-                "UPDATE posts SET title = ?, content = ?, tags = ?,likes = ?,images =?  WHERE id = ?",
+                "UPDATE posts SET title = ?, content = ?, tags = ?,likes = ?,image =?  WHERE id = ?",
                post.getTitle(), post.getContent(), post.getTags(),post.getLikes(), post.getImage(),post.getId());
     }
 

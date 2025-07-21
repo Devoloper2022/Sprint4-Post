@@ -1,145 +1,124 @@
 package com.sonik.practicum.service;
 
+import com.sonik.practicum.dto.CommentDto;
+import com.sonik.practicum.dto.LikeDto;
+import com.sonik.practicum.dto.PostsDto;
+import com.sonik.practicum.models.Entity.Post;
 import com.sonik.practicum.repository.Interface.PostRepo;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PostServiceTest {
+    @InjectMocks
+    private PostService postService;
+
     @Mock
-    private PostRepo postRepository;
+    private PostRepo postRepo;
+
     @Mock
     private CommentService commentService;
 
-    @TempDir
-    Path tempUploadDir;
-
-    private PostService postService;
-
     @BeforeEach
-    void setUp() {
-        postService = new PostService(postRepository, commentService);
+    void setUp() throws Exception {
+        // вручную установить значение storePath через reflection
+        Field field = PostService.class.getDeclaredField("storePath");
+        field.setAccessible(true);
+        field.set(postService, "/tmp/");
     }
 
-    private Post createPost(String title, String content) {
-        Post post = new Post();
-        post.setTitle(title);
-        post.setText(content);
-        return post;
+
+    @Test
+    void testFindAll() {
+        Post post = new Post(1L, "title", "text", "tag", 0,"img.jpg");
+        List<CommentDto> comments = List.of(new CommentDto());
+
+        when(postRepo.findAll()).thenReturn(List.of(post));
+        when(commentService.findAll(1L)).thenReturn(comments);
+
+        List<PostsDto> result = postService.findAll();
+
+        assertEquals(1, result.size());
+        assertEquals("title", result.get(0).getTitle());
     }
 
     @Test
-    void saveNewPost () throws Exception{
-        Post post = createPost("Title","content");
-        MockMultipartFile image = new MockMultipartFile("file","pic.jpg", "image/jpeg",new byte[] {1,2,3});
+    void testFindById() {
+        Post post = new Post(1L, "title", "text", "tag", 3,"img.jpg" );
+        when(postRepo.findById(1L)).thenReturn(post);
+        when(commentService.findAll(1L)).thenReturn(List.of());
 
-        when(postRepository.save(any())).thenReturn(1L);
-        when(postRepository.findById(1L)).thenReturn(post);
-        when(tagRepository.loadTags(1L)).thenReturn(List.of("tag1"));
-        when(commentService.loadComments(1L)).thenReturn(List.of());
+        PostsDto dto = postService.findById(1L);
 
-        Post saved = postServiceImpl.save(post, image, "tag1,tag2");
-
-        assertNotNull(saved.getImagePath());
-        assertTrue(saved.getImagePath().endsWith(".jpg"));
-
-        Path path = tempUploadDir.resolve(saved.getImagePath());
-        assertTrue(Files.exists(path));
-        verify(postRepository).save(any());
-        verify(tagRepository).insertTags(eq(1L), eq(List.of("tag1", "tag2")));
+        assertEquals("title", dto.getTitle());
     }
 
     @Test
-    void findAllPosts () {
-        Post p1 = createPost("Title1", "content1");
-        Post p2 =createPost("Title2", "content2");
-        p1.setId(1L);
-        p2.setId(2L);
+    void testLikeIncrement() {
+        Post post = new Post(1L, "title", "text", "tag", 0,"img.jpg");
+        when(postRepo.findById(1L)).thenReturn(post);
 
-        List<Post> all = List.of(p1,p2);
-        Paging paging = new Paging();
-        paging.setPageNumber(1);
-        paging.setPageSize(1);
+        postService.like(new LikeDto(true), 1L);
 
-        when(postRepository.findAll()).thenReturn(all);
-        when(tagRepository.loadTags(1L)).thenReturn(List.of("tag1"));
-        when(tagRepository.loadTags(2L)).thenReturn(List.of("tag2"));
-
-        List<Post> res = postServiceImpl.findAll(null, paging);
-        assertEquals(1, res.size());
-        assertEquals("Title1", res.get(0).getTitle());
-        assertEquals(List.of("tag1"), res.get(0).getTags());
-        assertTrue(paging.isHasNext());
-
-        verify(postRepository).findAll();
-        verify(tagRepository).loadTags(1L);
-        verify(tagRepository).loadTags(2L);
+        assertEquals(1, post.getLikes());
+        verify(postRepo).update(post);
     }
 
     @Test
-    void updatePost() {
-        Post updatePost = createPost("New Title", "Updated text");
-        MockMultipartFile image = new MockMultipartFile("file", "newpic.jpg", "image/jpeg", new byte[] { 4, 5, 6 });
+    void testLikeDecrement() {
+        Post post = new Post(1L, "title", "text", "tag", 2,"img.jpg");
+        when(postRepo.findById(1L)).thenReturn(post);
 
-        Post expectedPost = createPost("New Title", "Updated text");
-        expectedPost.setId(1L);
-        expectedPost.setImagePath("newpic.jpg");
-        expectedPost.setTags(List.of("newtag1"));
-        expectedPost.setComments(List.of());
+        postService.like(new LikeDto(false), 1L);
 
-        when(tagRepository.loadTags(1L)).thenReturn(List.of("newtag1"));
-        when(commentService.loadComments(1L)).thenReturn(List.of());
-        when(postRepository.findById(1L)).thenReturn(expectedPost);
-
-        Post updated = postServiceImpl.update(1L, updatePost, image, "newtag1");
-        assertEquals("New Title", updated.getTitle());
-        assertEquals(List.of("newtag1"), updated.getTags());
-
-        verify(postRepository).update(argThat(post -> post.getId().equals(1L) && post.getTitle().equals("New Title")
-                && post.getText().equals("Updated text")));
-        verify(tagRepository).deleteTags(1L);
-        verify(tagRepository).insertTags(eq(1L), eq(List.of("newtag1")));
+        assertEquals(1, post.getLikes());
+        verify(postRepo).update(post);
     }
 
     @Test
-    void findByIdPost() {
-        Post post = createPost("Title", "content");
-        post.setId(1L);
+    void testSaveWithImage() throws IOException {
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.isEmpty()).thenReturn(false);
+        when(file.getOriginalFilename()).thenReturn("test.jpg");
 
-        when(postRepository.findById(1L)).thenReturn(post);
-        when(tagRepository.loadTags(1L)).thenReturn(List.of("tag1", "newtag1"));
-        when(commentService.loadComments(1L)).thenReturn(List.of());
+        doAnswer(inv -> {
+            File dest = inv.getArgument(0);
+            try (FileOutputStream out = new FileOutputStream(dest)) {
+                out.write("img".getBytes());
+            }
+            return null;
+        }).when(file).transferTo(any(File.class));
 
-        Post res = postServiceImpl.findById(1L);
-        assertEquals(1L, res.getId());
-        assertEquals("Title", res.getTitle());
-        assertEquals(List.of("tag1", "newtag1"), res.getTags());
-        assertNotNull(res.getComments());
-        verify(postRepository).findById(1L);
-        verify(tagRepository).loadTags(1L);
-        verify(commentService).loadComments(1L);
+        postService.save("Title", "Text", "Tag", file);
+
+        verify(postRepo).save(any(Post.class));
     }
+
 
     @Test
-    void lincrementsLikes() {
-        postServiceImpl.like(1L, true);
-        verify(postRepository).updateLikes(1L, 1);
+    void testDeleteById() {
+        postService.deleteById(123L);
+        verify(postRepo).deleteById(123L);
     }
 
-    @Test
-    void decrementsLikes() {
-        postServiceImpl.like(1L, false);
-        verify(postRepository).updateLikes(1L, -1);
-    }
 
-    @Test
-    void deleteByIdPost() {
-        postServiceImpl.deleteById(2L);
-        verify(postRepository).deleteById(2L);
-    }
+
 }

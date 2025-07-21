@@ -28,17 +28,11 @@ public class PostController {
 
     @GetMapping
     public String posts(
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "tag", required = false) String tag,
             Model model
     ) {
         List<PostsDto> posts = service.findAll();
 
         model.addAttribute("posts", posts);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageSize", size);
-        model.addAttribute("tag", tag);
         return "post/posts";
     }
 
