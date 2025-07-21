@@ -34,7 +34,7 @@
 ## Deploy to Tomcat
 - Install **Apache Tomcat 10.1 or higher**
 -  Copy the WAR file to Tomcat's deployment directory:
-   ``bash cp target/spring-web-myblog.war /path/to/tomcat/webapps/``
+   ``bash cp target/post.war /path/to/tomcat/webapps/``
 - Start Tomcat:
   ``bash cd /path/to/tomcat/bin./startup.sh``
 - Open the app in your browser:
