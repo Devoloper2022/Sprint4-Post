@@ -1,7 +1,4 @@
-# My Blog (Spring MVC App)
-This is a simple educational blog web application built with **Java 21** and **Spring Framework** (no Spring Boot).  
-The app supports full CRUD for blog posts, image uploads, likes, tags, comments, and pagination.  
-Manually configured and packaged as a WAR file for deployment to a servlet container (Tomcat 10.1+).
+# My Blog 
 
 ## Technologies:
 - Java 21
