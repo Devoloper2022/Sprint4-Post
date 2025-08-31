@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Controller
-@RequestMapping("/blog")
+@RequestMapping("/")
 public class PostController {
     private final PostService service;
     private final CommentService commentService;
@@ -45,7 +45,7 @@ public class PostController {
             @RequestParam(value = "image", required = false) MultipartFile image)
     {
         service.save(title,content,tags,image);
-        return "redirect:/blog";
+        return "redirect:/";
     }
 
 
@@ -72,7 +72,7 @@ public class PostController {
     ) {
         service.update(title ,content,tags,image, id);
 
-        return "redirect:/post/blog/" + id;
+        return "redirect:/" + id;
     }
 
     @GetMapping(value = "/{id}/edit")
@@ -88,7 +88,7 @@ public class PostController {
     public String delete(@PathVariable(name = "id") Long id) {
         service.deleteById(id);
 
-        return "redirect:/blog";
+        return "redirect:/";
     }
 
 
@@ -98,7 +98,7 @@ public class PostController {
             @ModelAttribute LikeDto like) {
         service.like(like, id);
 
-        return "redirect:/blog/" + id;
+        return "redirect:/" + id;
     }
 
     @PostMapping(value = "/{id}/comments")
@@ -106,7 +106,7 @@ public class PostController {
             @ModelAttribute CommentDto dto,
             @PathVariable(name = "id") Long id) {
         commentService.save(dto, id);
-        return "redirect:/blog/" + id;
+        return "redirect:/" + id;
     }
 
     @PostMapping(value = "/{id}/comments/{commentsId}")
@@ -117,7 +117,7 @@ public class PostController {
     ) {
         dto.setId(commentsId);
         commentService.update(dto);
-        return "redirect:/blog/" + id;
+        return "redirect:/" + id;
     }
 
     @PostMapping(value = "/{id}/comments/{commentsId}/delete")
@@ -126,7 +126,7 @@ public class PostController {
             @PathVariable(name = "commentsId") Long commentsId
     ) {
         commentService.deleteById(commentsId);
-        return "redirect:/blog/" + id;
+        return "redirect:/" + id;
     }
 
 

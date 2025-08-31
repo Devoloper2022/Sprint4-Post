@@ -2,50 +2,46 @@
 
 ## Technologies:
 - Java 21
-- Spring Framework 6 (WebMVC, Spring Test)
+- Spring Framework 6 (Spring Boot)
 - Thymeleaf 3
-- Maven
+- Gradle
 - Apache Tomcat 10.1+
 - H2 Database (for tests)
 - JUnit 5 + Mockito
 
 ## Project Structure
 - MVC layered architecture (`Controller`, `Service`, `DAO`)
-- Manual configuration (`web.xml`, `DispatcherServlet`, etc.)
-- WAR packaging for servlet container deployment
+- Configuration (`Spring Boot`, etc.)
+- JAR packaging for servlet container deployment
 - Image upload support (`MultipartFile`)
 - Full CRUD for blog posts, with tags, likes, comments
 
 ## Features
-- Homepage and post list
+- Homepage  post list
 - Full CRUD: create, edit, delete blog posts
 - Add/edit/delete comments
 - Like/dislike system
 - Tag support
-- Pagination and search
 - Image upload
 
-## Build WAR
-- Use Maven to compile the project and generate a WAR file:
-  ``bash mvn clean package``
-- The WAR file will be located at:
-  ``target/post.war``
+## Build JAR
+- Use Gradle to compile the project and generate a JAR file:
+  ``bash ./gradlew clean build ``
+- The JAR file will be located at:
+  ``build/libs/Post-0.0.1-SNAPSHOT.jar``
 
 ## Deploy to Tomcat
-- Install **Apache Tomcat 10.1 or higher**
--  Copy the WAR file to Tomcat's deployment directory:
-   ``bash cp target/post.war /path/to/tomcat/webapps/``
 - Start Tomcat:
-  ``bash cd /path/to/tomcat/bin./startup.sh``
+  ``bash  java  -jar Post-0.0.1-SNAPSHOT.jar``
 - Open the app in your browser:
-  ``http://localhost:8080/post/blog``
+  ``http://localhost:9091/``
 - add path dir to storage.path in `resource/application.properties`.
 
 ## Running Tests
 This project includes unit and integration tests for:
 - Service layer logic
 - Run all tests using:
-  ``bash mvn test``
+  ``bash ./gradlew test``
 
 ## Usage
 - Click “Add Post” to create a new blog entry
