@@ -2,9 +2,9 @@ package com.sonik.practicum.controller;
 
 import com.sonik.practicum.dto.CommentDto;
 import com.sonik.practicum.dto.LikeDto;
-import com.sonik.practicum.dto.PostDto;
+
 import com.sonik.practicum.dto.PostsDto;
-import com.sonik.practicum.models.Entity.Post;
+
 import com.sonik.practicum.service.CommentService;
 import com.sonik.practicum.service.PostService;
 import org.springframework.stereotype.Controller;
@@ -33,7 +33,7 @@ public class PostController {
         List<PostsDto> posts = service.findAll();
 
         model.addAttribute("posts", posts);
-        return "post/posts";
+        return "posts";
     }
 
 
@@ -59,7 +59,7 @@ public class PostController {
     public String getPostPage(@PathVariable(name = "id") Long id, Model model) {
         PostsDto post = service.findById(id);
         model.addAttribute("post", post);
-        return "post/post";
+        return "post";
     }
 
     @PostMapping(value = "/{id}")
@@ -80,7 +80,7 @@ public class PostController {
                               Model model) {
         PostsDto dto = service.findById(id);
         model.addAttribute("post", dto);
-        return "post/add-post";
+        return "add-post";
     }
 
 
