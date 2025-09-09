@@ -97,4 +97,28 @@ public class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+
+
+
+
+    @Test
+    public void testAddCommentStatus() throws Exception {
+        mockMvc.perform(post("/1/comments")
+                        .param("comment", "some comment"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testEditCommentStatus() throws Exception {
+        mockMvc.perform(post("/1/comments/2")
+                        .param("comment", "some text"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDeleteCommentStatus() throws Exception {
+        mockMvc.perform(post("/1/comments/2/delete"))
+                .andExpect(status().isOk());
+    }
+
 }
