@@ -121,4 +121,23 @@ public class PostControllerTest {
                 .andExpect(status().isOk());
     }
 
+
+
+
+    @Test
+    public void testPostLikeStatus() throws Exception {
+        mockMvc.perform(post("/1/like")
+                        .param("like", "true"))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void testPostDislikeStatus() throws Exception {
+        mockMvc.perform(post("/1/like")
+                        .param("like", "false"))
+                .andExpect(status().isOk());
+    }
+
+
 }
